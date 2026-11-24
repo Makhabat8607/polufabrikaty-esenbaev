@@ -191,7 +191,7 @@
 
   <section id="catalog">
     <div class="sec-head">
-      <div><h2>Каталог</h2><p>Цены по прайсу на 1 октября 2026 г.</p></div>
+      <div><h2>Каталог</h2><p>Розничные цены. Магазинам и кафе — оптовый прайс по запросу в <a href="https://wa.me/77027030800?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%9F%D1%80%D0%B8%D1%88%D0%BB%D0%B8%D1%82%D0%B5%20%D0%BE%D0%BF%D1%82%D0%BE%D0%B2%D1%8B%D0%B9%20%D0%BF%D1%80%D0%B0%D0%B9%D1%81." target="_blank">WhatsApp</a>.</p></div>
       <input class="search" id="search" type="search" placeholder="🔍 Найти: пельмени, тесто, фарш…">
     </div>
     <div class="filters" id="filters"></div>
@@ -271,6 +271,10 @@
    =================================================== */
 const WHATSAPP = "77027030800";   // 8 702 703 08 00
 const FREE_DELIVERY = 10000;      // бесплатная доставка от этой суммы, ₸
+// Розничная наценка для покупателей на сайте: 1.20 = +20% к оптовому прайсу.
+// Цены в списке ниже — ОПТОВЫЕ (из прайса). На сайте показываются розничные (опт × наценка, округление вверх до 10 ₸).
+// Чтобы показывать опт как есть — поставьте 1.
+const RETAIL_MARKUP = 1.20;
 
 const P18 = "при −18 °C — 30 суток";
 const PRODUCTS = [
@@ -410,6 +414,8 @@ const PRODUCTS = [
 /* =================================================== */
 
 PRODUCTS.forEach((p,i) => p.id = i+1);
+// оптовая цена -> розничная
+PRODUCTS.forEach(p => p.w = p.w.map(([label, opt]) => [label, Math.ceil(opt * RETAIL_MARKUP / 10) * 10]));
 // в каждом разделе сначала товары с фото упаковки
 const CATS=[...new Set(PRODUCTS.map(p=>p.cat))];
 PRODUCTS.sort((x,y)=> CATS.indexOf(x.cat)-CATS.indexOf(y.cat) || (typeof y.img==="string")-(typeof x.img==="string") || x.id-y.id);
